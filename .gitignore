@@ -66,6 +66,7 @@ pnpm-debug.log*
 
 # dependencies
 node_modules/
+pnpm-lock.yaml
 
 # environment variables
 .env
