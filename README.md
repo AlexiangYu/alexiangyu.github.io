@@ -1,4 +1,4 @@
 # Astro Theme Pure
 
 
-博客主题由 Astro 构建。
+博客框架 & 主题: Astro + Astro Theme Pure

@@ -2,11 +2,18 @@
 
 import eslint from '@eslint/js'
 import eslintPluginAstro from 'eslint-plugin-astro'
-import tseslint from 'typescript-eslint'
+import { configs as tsEslintConfigs } from '@typescript-eslint/eslint-plugin'
+
+const tsEslintRecommended = [
+  {
+    plugins: ['@typescript-eslint'],
+    extends: ['plugin:@typescript-eslint/recommended']
+  }
+];
 
 export default [
   eslint.configs.recommended,
-  ...tseslint.configs.recommended,
+  ...tsEslintRecommended,
   ...eslintPluginAstro.configs.recommended,
   // Ignore files
   {
