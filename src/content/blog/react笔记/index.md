@@ -160,6 +160,37 @@ function App() {
 }
 ```
 
+#### Ref / State 与普通变量的区别
+
+
+特性 |	普通变量 (let / const) |	useRef |	useState	
+--- | --- | --- | ---
+跨渲染保持值 |	❌ 不能 (每次都重置) |	✅ 可以 |	✅ 可以	
+改变值触发重新渲染 |	❌ 不能 |	❌ 不能 |	✅ 可以	
+如何访问/修改 |	直接访问/赋值 |	通过 .current 属性 |	value, setValue()	
+
+
+- `Ref`: 跨越多次渲染而存在，但它的改变不应该引起界面刷新，或者需要直接操作 DOM
+
+
+
+
+#### 解决闭包陷阱
+
+异步操作的回调函数形成了一个闭包，捕获了创建时的上下文，之后却无法再更新。
+
+-  `useRef()` 创建的 `.current` 属性是最新的状态引用
+
+```jsx
+  const [text, setText] = useState('');
+  const textRef = useRef(text);
+
+  function handleSend() {
+    setTimeout(() => {
+      alert('正在发送：' + textRef.current);
+    }, 3000);
+  }
+```
 
 
 ## 组件
@@ -462,6 +493,8 @@ class App extends React.Component {
 
 副作用钩子，仅在特定条件下执行：
 
+> `Effect`：React 中的专有定义——**由渲染引起的副作用**
+
 1. 接收一个函数，创建副作用操作，函数中可以有异步操作（发送AJAX请求，更改DOM等），可以返回一个清除副作用的函数。
 2. 传入依赖项指定执行时机：
 
@@ -497,6 +530,8 @@ function App() {
   );
 }
 ```
+
+> React 总是在执行下一轮渲染的 Effect 之前清理上一轮渲染的 Effect。
 
 
 
