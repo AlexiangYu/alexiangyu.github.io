@@ -163,11 +163,11 @@ function App() {
 #### Ref / State 与普通变量的区别
 
 
-特性 |	普通变量 (let / const) |	useRef |	useState	
---- | --- | --- | ---
-跨渲染保持值 |	❌ 不能 (每次都重置) |	✅ 可以 |	✅ 可以	
-改变值触发重新渲染 |	❌ 不能 |	❌ 不能 |	✅ 可以	
-如何访问/修改 |	直接访问/赋值 |	通过 .current 属性 |	value, setValue()	
+特性 |	普通变量 (let / const) |	useRef |	useState	| Props
+--- | --- | --- | --- | --- |
+跨渲染保持值 |	❌ 不能 (每次都重置) |	✅ 可以 |	✅ 可以 |	...
+改变值触发重新渲染 |	❌ 不能 |	❌ 不能 |	✅ 可以 |	✅ 可以
+如何访问/修改 |	直接访问/赋值 |	通过 .current 属性 |	value, setValue() |	父组件传递
 
 
 - `Ref`: 跨越多次渲染而存在，但它的改变不应该引起界面刷新，或者需要直接操作 DOM
@@ -391,6 +391,18 @@ const FormWrapper = () => {
 }
 ```
 
+**React19不再需要**
+
+```jsx
+function MyInput({ref}) {
+  return <input ref={ref} />
+}
+
+//...
+<MyInput ref={ref} />
+```
+
+
 
 **关于组件挂载位置**
 
@@ -493,7 +505,7 @@ class App extends React.Component {
 
 副作用钩子，仅在特定条件下执行：
 
-> `Effect`：React 中的专有定义——**由渲染引起的副作用**
+> `Effect`：React 中的专有定义——**由渲染引起的副作用**——渲染后需执行的操作。
 
 1. 接收一个函数，创建副作用操作，函数中可以有异步操作（发送AJAX请求，更改DOM等），可以返回一个清除副作用的函数。
 2. 传入依赖项指定执行时机：
@@ -532,6 +544,24 @@ function App() {
 ```
 
 > React 总是在执行下一轮渲染的 Effect 之前清理上一轮渲染的 Effect。
+
+
+#### useMemo
+
+缓存钩子，缓存昂贵的计算结果，避免重复计算。
+
+> 被 React Compiler 自动处理？
+
+```jsx
+import { useMemo, useState } from 'react';
+
+function TodoList({ todos, filter }) {
+  const [newTodo, setNewTodo] = useState('');
+  // ✅ 除非 todos 或 filter 发生变化，否则不会重新执行 getFilteredTodos()
+  const visibleTodos = useMemo(() => getFilteredTodos(todos, filter), [todos, filter]);
+  // ...
+}
+```
 
 
 
