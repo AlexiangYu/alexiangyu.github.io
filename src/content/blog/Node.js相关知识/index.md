@@ -158,7 +158,7 @@ if (typeof module === 'object' && module.hot) {
 
 ## Thunk 是什么
 
-Thunk函数，它接受一个函数作为参数，返回一个函数，这个函数可以接受另一个参数，并返回一个值。主要用于延迟执行，可以将一些计算推迟到运行时执行，比如读取文件、网络请求等。
+Thunk函数接受一个函数作为参数，返回一个函数，这个函数可以接受另一个参数，并返回一个值。主要用于延迟执行，可以将一些计算推迟到运行时执行，比如读取文件、网络请求等。
 
 ```js
 function readFile(filename) {
@@ -176,9 +176,9 @@ readFile('hello.txt')(function(err, data) {
 });
 ```
 
-在redux中，Thunk用来处理异步任务，它可以让 action 处理函数返回一个函数。
+在 redux 中，Thunk用来处理异步任务，它可以让 `action` 处理函数返回一个函数。
 
-Thunk middleware自动将返回的函数包裹在 dispatch 函数中，这样就可以在 action 处理函数中执行异步操作。
+Thunk middleware自动将返回的函数包裹在 `dispatch` 函数中，这样就可以在 `action` 处理函数中执行异步操作。
 
 ```jsx
 function fetchUser(id) {

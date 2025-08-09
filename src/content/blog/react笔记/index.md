@@ -1,6 +1,6 @@
 ---
 title: React笔记
-description: 'Write your description here.'
+description: 'React学习笔记'
 publishDate: 2024-08-21 22:43:01
 tags:
   - web前端
@@ -625,7 +625,7 @@ function App() {
 ```
 
 
-## Redux
+## Redux/RTK
 
 集中状态管理工具
 
@@ -635,24 +635,7 @@ function App() {
 3. 使用 `store.dispatch()` 提交 `action` 对象，触发 `reducer` 函数更新 `state`
 5. 使用 `store.getState()` 获取 `state`
 
-使用 `React Toolkit`：`react-redux`
-
-- `xxStore` 模块：
-  1. `createSlice()` 传入`name`, `initialState`, `reducers` 参数，创建 `xxStore` 对象
-  2. 异步操作：导出单独封装的函数，返回相应异步操作，即 `action`
-  3. 导出 从 `xxStore.actions` 解构出来的actionCreater函数
-  4. 默认导出 reducer `xxStore.reducer`
-- store的 `index` 入口文件：
-  1. `configureStore` 将所有模块的 `reducer` 合并成根`store`，统一导出
-- 在项目 `index.js` 中，将`store`注入React：
-  1. 导入 `Provider`, `store`
-  2. `<Provider store={store}> <App /> </Provider>`：为所有组件提供 `Redux store`
-- 组件中使用
-  1. `useSelector()` ：从 `store` 中获取 `state`
-  2. `useDispatch()` ：获取 `dispatch` 函数，用于提交 `action`
-
 ```jsx
-
 import { createStore } from "redux"
 
 const initialState = { count: 0 }
@@ -693,7 +676,81 @@ function App() {
 
 reducer 为纯函数 -> 处理 action 副作用
 
+
+
+
+使用 `React Toolkit`：`react-redux`
+
+- `xxStore` 模块：
+  1. `createSlice()` 传入`name`, `initialState`, `reducers` 参数，创建 `xxStore` 对象
+  2. 异步操作：导出单独封装的函数，返回相应异步操作，即 `action`
+  3. 导出 从 `xxStore.actions` 解构出来的actionCreater函数
+  4. 默认导出 reducer `xxStore.reducer`
+- store的 `index` 入口文件：
+  1. `configureStore` 将所有模块的 `reducer` 合并成根`store`，统一导出
+- 在项目 `index.js` 中，将`store`注入React：
+  1. 导入 `Provider`, `store`
+  2. `<Provider store={store}> <App /> </Provider>`：为所有组件提供 `Redux store`
+- 组件中使用
+  1. `useSelector()` ：从 `store` 中获取 `state`
+  2. `useDispatch()` ：获取 `dispatch` 函数，用于提交 `action`
+
+
+```jsx
+import { createSlice, configureStore } from '@reduxjs/toolkit';
+
+const counterSlice = createSlice({  // 使用 createSlice 定义 state, actions, 和 reducer
+  name: 'counter', // 切片名称，会用作 action type 的前缀
+  initialState: { value: 0 },
+  // 定义 reducers，key 会成为 action 的一部分
+  reducers: {
+    increment: (state) => { // 内置 Immer，可以直接修改 state      
+      state.value += 1;
+    },
+    decrement: (state) => {
+      state.value -= 1;
+    },
+  },
+});
+
+export const { increment, decrement } = counterSlice.actions; // 自动生成的 Action Creators
+
+const counterReducer = counterSlice.reducer;
+
+const store = configureStore({
+  reducer: {
+    counter: counterReducer, // 将 slice 的 reducer 组合到根 reducer 中
+  },
+});
+```
+
+```jsx
+import { useSelector, useDispatch } from 'react-redux';
+
+function Counter() {
+  const count = useSelector((state) => state.counter.value); // 从 store 中获取 state
+  const dispatch = useDispatch(); // 获取 dispatch 函数
+
+  const handleIncrement = () => {
+    dispatch(increment()); // 触发 action
+  }
+
+  const handleDecrement = () => {
+    dispatch(decrement());
+  }
+
+  return (
+    <div>
+      <h1>{count}</h1>
+      <button onClick={handleIncrement}>+</button>
+      <button onClick={handleDecrement}>-</button>
+    </div>
+  )
+}
+```
+
 中间件，使用 thunk 实现异步操作
+
 
 
 
