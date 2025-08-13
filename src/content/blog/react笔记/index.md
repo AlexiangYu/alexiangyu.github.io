@@ -678,8 +678,9 @@ reducer 为纯函数 -> 处理 action 副作用
 
 
 
+#### 使用 `React Toolkit`
 
-使用 `React Toolkit`：`react-redux`
+`react-redux`
 
 - `xxStore` 模块：
   1. `createSlice()` 传入`name`, `initialState`, `reducers` 参数，创建 `xxStore` 对象
@@ -723,6 +724,8 @@ const store = configureStore({
   },
 });
 ```
+中间件，使用 thunk 实现异步操作
+
 
 ```jsx
 import { useSelector, useDispatch } from 'react-redux';
@@ -749,7 +752,109 @@ function Counter() {
 }
 ```
 
-中间件，使用 thunk 实现异步操作
+#### 异步状态管理
+
+`createAsyncThunk` (Redux Toolkit) 会自动为你生成并 dispatch 三种不同状态的 action：`pending` / `fulfilled` / `rejected`
+
+第一步：创建异步 Thunk
+
+在 slice 文件 (e.g., userSlice.js) 中:
+
+```jsx
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { fetchUserById } from './userAPI'; // 假设这是一个调用API的函数
+
+// 1. 创建 async thunk
+// 第一个参数是 action type 的前缀: 'users/fetchById'
+// 第二个参数是一个返回 Promise 的 "payload creator" 函数
+export const fetchUser = createAsyncThunk(
+  'users/fetchById',
+  async (userId, thunkAPI) => {
+    // 这里是你的异步逻辑
+    const response = await fetchUserById(userId);
+    return response.data; // 这个返回值会成为 fulfilled action 的 payload
+  }
+);
+```
+
+第二步：在 Slice 中处理异步 Action
+
+```jsx
+const userSlice = createSlice({
+  name: 'users',
+  initialState: {
+    entity: null,
+    status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+    error: null,
+  },
+  reducers: {
+    // 这里放同步的 reducers
+  },
+  // 2. 在 extraReducers 中处理 createAsyncThunk 生成的 actions
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUser.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.entity = action.payload; // action.payload 就是异步函数的返回值
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+      });
+  },
+});
+
+export default userSlice.reducer;
+```
+
+`extraReducers` 是专门用来处理由 `createSlice` 外部定义的 action `的地方，createAsyncThunk` 生成的 action 就属于这种情况。
+
+第三步：在组件中 Dispatch
+
+
+```jsx
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUser } from './userSlice';
+
+function UserProfile({ userId }) {
+  const dispatch = useDispatch();
+  const { entity, status, error } = useSelector((state) => state.users);
+
+  useEffect(() => {
+    // dispatch 这个 async thunk action
+    dispatch(fetchUser(userId));
+  }, [dispatch, userId]);
+
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  if (status === 'failed') {
+    return <div>Error: {error}</div>;
+  }
+
+  return <div>Welcome, {entity?.name}</div>;
+}
+```
+
+手动编写 Thunk
+
+```jsx
+const fetchUserManually = (userId) => async (dispatch, getState) => {
+  try {
+    dispatch(userLoading());
+    const response = await fetchUserById(userId);
+    dispatch(userSuccess(response.data));
+  } catch (error) {
+    dispatch(userFailed(error.message));
+  }
+};
+```
 
 
 
