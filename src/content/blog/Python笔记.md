@@ -654,6 +654,10 @@ for i in zip(a, b, c):
 # (3, 6, 9)
 ```
 
+- `zip_longest(l1, l2, fillvalue = None)` 补全缺失值
+- `unzip(l)` 解压序列为元组列表
+
+
 **二分查找**
 
 - `bisect.bisect()` 
