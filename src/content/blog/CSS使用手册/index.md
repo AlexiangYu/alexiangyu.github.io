@@ -435,6 +435,36 @@ function setRem(ratio) {
 - 循环、条件语句、定义函数
 - mixins、继承
 
+#### classnames 库
+
+主要在 React 中使用，自动生成类名，避免命名冲突。
+
+```js
+const className = classnames('class1', 'class2', {
+    'class3': true,
+    'class4': false,
+    'class5': undefined,
+    'class6': null,
+});
+
+console.log(className); // "class1 class2 class3"
+```
+
+#### CSS Module
+
+- 每个 CSS 都是一个独立的模块，命名 `xxx.module.css`
+- 自动生成唯一的类名，避免命名冲突
+- CRA 原生支持 CSS Module
+
+代码演示，参考 `components/Button2.tsx`
+
+#### 使用 Sass
+
+- CSS 写法比较原始
+- 一般使用 Sass less 等预处理语言
+- CRA 支持 Sass Module ，把后缀改为 `.scss` 即可
+
+
 
 #### CSS 模块化
 
