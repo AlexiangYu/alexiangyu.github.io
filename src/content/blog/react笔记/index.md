@@ -70,7 +70,7 @@ function App() {
 
   return (
     <div>
-      <button onClick={(e) => handleClick(e, "apple")}>Click me</button>
+      <button onClick={(e) => handleClick(e, "apple")}> click me </button>
     </div>
   );
 }
@@ -256,7 +256,7 @@ class App extends React.Component {
 ## 组件通信
 
 - `props`：父组件 -> 子组件
-  - `props.children`: 接收插槽内容: jsx
+  - `props.children`: 接收插槽内容: JSX
 - 回调函数：子组件 -> 父组件
 
 ```jsx
